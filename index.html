@@ -92,14 +92,7 @@
       font-weight: bold;
       color: #000;
     }
-    .paypal-button-container {
-      margin-top: 10px;
-      display: flex;
-      justify-content: center;
-    }
-
-    /* Match your "Shop Now" button style */
-    .btn, .paypal-button {
+    .btn {
       background-color: #0b7285;
       color: #fff;
       border: none;
@@ -110,9 +103,27 @@
       display: inline-block;
       font-size: 1rem;
       transition: background-color 0.3s ease;
+      margin-top: 10px;
     }
-    .btn:hover, .paypal-button:hover {
+    .btn:hover {
       background-color: #095e6d;
+    }
+
+    /* Contact form uniform sizing */
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-width: 500px;
+      margin: 0 auto;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+      font-size: 1rem;
+      box-sizing: border-box;
     }
 
     footer {
@@ -175,21 +186,21 @@
       <div class="catalog">
 
         <!-- Product 1 -->
-        <div class="product">
+        <div class="product" data-title="Retro Square Electronic Watch. Unisex" data-price="5.99">
           <img src="images/product1.jpg" alt="Retro Square Electronic Watch" class="clickable-img">
           <h3>Retro Square Electronic Watch. Unisex</h3>
           <p>Classic Electronic Digital Display Watch from our Childhood.</p>
           <div class="price">$5.99</div>
-          <div id="paypal-button-container-1" class="paypal-button-container"></div>
+          <button class="btn shop-now-btn">Shop Now</button>
         </div>
 
         <!-- Product 2 -->
-        <div class="product">
+        <div class="product" data-title="Motorola RAZR V3i" data-price="15.99">
           <img src="images/product2.jpg" alt="Motorola RAZR V3i" class="clickable-img">
           <h3>Motorola RAZR V3i</h3>
           <p>That "Show off" pocket flip mobile phone we all loved.</p>
           <div class="price">$15.99</div>
-          <div id="paypal-button-container-2" class="paypal-button-container"></div>
+          <button class="btn shop-now-btn">Shop Now</button>
         </div>
 
       </div>
@@ -221,50 +232,47 @@
   <script src="https://www.paypal.com/sdk/js?client-id=AcHd6A2M8rLgNdUHAqQEO1FUA_bTk02T5Aldto7iDos-DNdaxuO1l0U798No3wOHUNuOIuhTy7EXqgAh&currency=USD"></script>
 
   <script>
-    // PayPal Buttons
-    paypal.Buttons({
-      style: {
-        color: 'gold',
-        shape: 'rect',
-        label: 'buynow',
-        height: 40
-      },
-      createOrder: function(data, actions) {
-        return actions.order.create({
-          purchase_units: [{
-            description: 'Retro Square Electronic Watch',
-            amount: { value: '5.99' }
-          }]
-        });
-      },
-      onApprove: function(data, actions) {
-        return actions.order.capture().then(function(details) {
-          alert('Thank you ' + details.payer.name.given_name + '! Your payment for the Retro Watch was successful.');
-        });
-      }
-    }).render('#paypal-button-container-1');
+    // Handle PayPal checkout
+    const buttons = document.querySelectorAll('.shop-now-btn');
+    let selectedProduct = { description: '', amount: '' };
 
-    paypal.Buttons({
-      style: {
-        color: 'gold',
-        shape: 'rect',
-        label: 'buynow',
-        height: 40
-      },
-      createOrder: function(data, actions) {
-        return actions.order.create({
-          purchase_units: [{
-            description: 'Motorola RAZR V3i',
-            amount: { value: '15.99' }
-          }]
-        });
-      },
-      onApprove: function(data, actions) {
-        return actions.order.capture().then(function(details) {
-          alert('Thank you ' + details.payer.name.given_name + '! Your payment for the Motorola RAZR V3i was successful.');
-        });
-      }
-    }).render('#paypal-button-container-2');
+    buttons.forEach(button => {
+      button.addEventListener('click', e => {
+        const product = e.target.closest('.product');
+        selectedProduct.description = product.dataset.title;
+        selectedProduct.amount = product.dataset.price;
+
+        // Create temporary PayPal button container
+        const container = document.createElement('div');
+        container.id = 'paypal-temp';
+        document.body.appendChild(container);
+
+        paypal.Buttons({
+          style: {
+            color: 'gold',
+            shape: 'rect',
+            label: 'buynow',
+            height: 40
+          },
+          createOrder: (data, actions) => {
+            return actions.order.create({
+              purchase_units: [{
+                description: selectedProduct.description,
+                amount: { value: selectedProduct.amount }
+              }]
+            });
+          },
+          onApprove: (data, actions) => {
+            return actions.order.capture().then(details => {
+              alert('Thank you ' + details.payer.name.given_name + '! Your payment for ' + selectedProduct.description + ' was successful.');
+              container.remove();
+            });
+          },
+          onCancel: () => container.remove(),
+          onError: () => container.remove()
+        }).render('#paypal-temp');
+      });
+    });
 
     // Image modal
     const modal = document.getElementById('imgModal');
