@@ -1,294 +1,252 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Rumshop — Minimal Online Store</title>
-  <meta name="description" content="Rumshop — minimalist online store" />
   <style>
     body {
       font-family: Arial, sans-serif;
       margin: 0;
-      background-color: #fff;
+      background: #fff;
       color: #222;
     }
+
     header {
-      background-color: #f8f8f8;
-      padding: 20px;
-      position: sticky;
-      top: 0;
+      background: #f8f8f8;
+      padding: 20px 40px;
       display: flex;
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid #ddd;
     }
+
     header h1 {
-      margin: 0;
       font-size: 1.5rem;
+      margin: 0;
     }
+
     nav a {
-      margin-left: 20px;
       text-decoration: none;
       color: #555;
+      margin-left: 20px;
       font-weight: bold;
     }
+
     nav a:hover {
       color: #000;
     }
-    main {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 0 20px;
-    }
+
     section {
-      margin-bottom: 60px;
-    }
-    .hero {
+      padding: 40px 20px;
       text-align: center;
-      margin-bottom: 60px;
     }
-    .hero h2 {
-      font-size: 2rem;
+
+    h2 {
+      font-size: 1.8rem;
       margin-bottom: 10px;
     }
-    .hero p {
-      color: #555;
+
+    .products {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 30px;
     }
-    .catalog {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 20px;
-    }
+
     .product {
       border: 1px solid #eee;
-      border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
-      text-align: center;
-      padding-bottom: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
+      border-radius: 10px;
+      width: 280px;
+      padding: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      transition: 0.3s;
     }
+
+    .product:hover {
+      transform: translateY(-3px);
+    }
+
     .product img {
       width: 100%;
-      height: 200px;
-      object-fit: cover;
+      border-radius: 10px;
       cursor: pointer;
-      transition: transform 0.3s ease;
+      transition: transform 0.3s;
     }
+
     .product img:hover {
       transform: scale(1.05);
     }
+
     .product h3 {
-      margin: 15px 0 5px;
-    }
-    .product p {
-      color: #777;
-      margin: 0 15px 10px;
-      font-size: 0.9rem;
-    }
-    .price {
-      font-weight: bold;
-      color: #000;
-    }
-    .btn {
-      background-color: #0b7285;
-      color: #fff;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 5px;
-      cursor: pointer;
-      text-decoration: none;
-      display: inline-block;
-      font-size: 1rem;
-      transition: background-color 0.3s ease;
-      margin-top: 10px;
-    }
-    .btn:hover {
-      background-color: #095e6d;
+      font-size: 1.2rem;
+      margin: 10px 0 5px;
     }
 
-    /* Contact form uniform sizing */
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      max-width: 500px;
-      margin: 0 auto;
+    .product p {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 10px;
     }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      border-radius: 5px;
-      border: 1px solid #ccc;
+
+    .price {
+      font-weight: bold;
       font-size: 1rem;
+      margin-bottom: 10px;
+    }
+
+    #paypal-button-container {
+      margin-top: 10px;
+    }
+
+    /* Contact form */
+    form input, form textarea {
+      width: 100%;
       box-sizing: border-box;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1rem;
+    }
+
+    form textarea {
+      height: 100px;
+      resize: none;
     }
 
     footer {
-      background-color: #f8f8f8;
-      padding: 20px;
+      background: #f8f8f8;
       text-align: center;
-      color: #777;
+      padding: 20px;
+      font-size: 0.9rem;
+      color: #555;
       border-top: 1px solid #ddd;
-    }
-
-    /* Modal styles */
-    .modal {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      padding-top: 60px;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0,0,0,0.8);
-    }
-    .modal-content {
-      margin: auto;
-      display: block;
-      max-width: 90%;
-      max-height: 80%;
-    }
-    .close {
-      position: absolute;
-      top: 20px;
-      right: 35px;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
-      cursor: pointer;
     }
   </style>
 </head>
 <body>
+
   <header>
     <h1>Rumshop</h1>
     <nav>
       <a href="#home">Home</a>
-      <a href="#catalog">Catalogue</a>
+      <a href="#shop">Shop</a>
       <a href="#contact">Contact</a>
     </nav>
   </header>
 
-  <main>
-    <section id="home" class="hero">
-      <h2>Welcome to Rumshop</h2>
-      <p>Only Selected Retro Stuff</p>
-      <a href="#catalog" class="btn">Shop Now</a>
-    </section>
+  <section id="home">
+    <h2>Only Selected Retro Stuff</h2>
+  </section>
 
-    <section id="catalog">
-      <h2>Product Catalogue</h2>
-      <div class="catalog">
+  <section id="shop">
+    <h2>Products</h2>
+    <div class="products">
 
-        <!-- Product 1 -->
-        <div class="product" data-title="Retro Square Electronic Watch. Unisex" data-price="5.99">
-          <img src="images/product1.jpg" alt="Retro Square Electronic Watch" class="clickable-img">
-          <h3>Retro Square Electronic Watch. Unisex</h3>
-          <p>Classic Electronic Digital Display Watch from our Childhood.</p>
-          <div class="price">$5.99</div>
-          <button class="btn shop-now-btn">Shop Now</button>
-        </div>
-
-        <!-- Product 2 -->
-        <div class="product" data-title="Motorola RAZR V3i" data-price="15.99">
-          <img src="images/product2.jpg" alt="Motorola RAZR V3i" class="clickable-img">
-          <h3>Motorola RAZR V3i</h3>
-          <p>That "Show off" pocket flip mobile phone we all loved.</p>
-          <div class="price">$15.99</div>
-          <button class="btn shop-now-btn">Shop Now</button>
-        </div>
-
+      <!-- Product 1 -->
+      <div class="product">
+        <img src="product1.jpg" alt="Retro Watch" onclick="expandImage(this)">
+        <h3>Retro Square Electronic Watch. Unisex.</h3>
+        <p>Classic Electronic Digital Display Watch from our Childhood.</p>
+        <div class="price">$5.99 USD</div>
+        <div id="paypal-button-container-1"></div>
       </div>
-    </section>
 
-    <section id="contact">
-      <h2>Contact Us</h2>
-      <p>Have questions? Get in touch using the form below.</p>
-      <form>
-        <input type="text" placeholder="Your Name" required>
-        <input type="email" placeholder="Your Email" required>
-        <textarea rows="5" placeholder="Your Message" required></textarea>
-        <button type="submit" class="btn">Send Message</button>
-      </form>
-    </section>
-  </main>
+      <!-- Product 2 -->
+      <div class="product">
+        <img src="product2.jpg" alt="Motorola RAZR V3i" onclick="expandImage(this)">
+        <h3>Motorola RAZR V3i</h3>
+        <p>That 'Show off' pocket flip mobile phone we all loved.</p>
+        <div class="price">$49.99 USD</div>
+        <div id="paypal-button-container-2"></div>
+      </div>
+
+    </div>
+  </section>
+
+  <section id="contact">
+    <h2>Contact Us</h2>
+    <form>
+      <input type="text" placeholder="Your Name" required>
+      <input type="email" placeholder="Your Email" required>
+      <textarea placeholder="Your Message"></textarea>
+      <button type="submit">Send</button>
+    </form>
+  </section>
 
   <footer>
-    <p>© 2025 Rumshop — Minimal Online Store</p>
+    &copy; 2025 Rumshop. All rights reserved.
   </footer>
 
-  <!-- Modal -->
-  <div id="imgModal" class="modal">
-    <span class="close">&times;</span>
-    <img class="modal-content" id="modalImg">
-  </div>
+  <!-- Image expand script -->
+  <script>
+    function expandImage(img) {
+      const overlay = document.createElement('div');
+      overlay.style.position = 'fixed';
+      overlay.style.top = 0;
+      overlay.style.left = 0;
+      overlay.style.width = '100%';
+      overlay.style.height = '100%';
+      overlay.style.backgroundColor = 'rgba(0,0,0,0.8)';
+      overlay.style.display = 'flex';
+      overlay.style.alignItems = 'center';
+      overlay.style.justifyContent = 'center';
+      overlay.style.zIndex = 1000;
 
-  <!-- PayPal Script -->
+      const fullImg = document.createElement('img');
+      fullImg.src = img.src;
+      fullImg.style.maxWidth = '90%';
+      fullImg.style.maxHeight = '90%';
+      fullImg.style.borderRadius = '10px';
+      overlay.appendChild(fullImg);
+
+      overlay.onclick = () => document.body.removeChild(overlay);
+      document.body.appendChild(overlay);
+    }
+  </script>
+
+  <!-- PayPal SDK -->
   <script src="https://www.paypal.com/sdk/js?client-id=AcHd6A2M8rLgNdUHAqQEO1FUA_bTk02T5Aldto7iDos-DNdaxuO1l0U798No3wOHUNuOIuhTy7EXqgAh&currency=USD"></script>
 
   <script>
-    // Handle PayPal checkout
-    const buttons = document.querySelectorAll('.shop-now-btn');
-    let selectedProduct = { description: '', amount: '' };
+    // Product 1
+    paypal.Buttons({
+      style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'buynow' },
+      createOrder: function(data, actions) {
+        return actions.order.create({
+          purchase_units: [{
+            description: 'Retro Square Electronic Watch. Unisex.',
+            amount: { value: '5.99' }
+          }]
+        });
+      },
+      onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+          alert('Thank you ' + details.payer.name.given_name + '! Your payment for the Retro Square Electronic Watch was successful.');
+        });
+      }
+    }).render('#paypal-button-container-1');
 
-    buttons.forEach(button => {
-      button.addEventListener('click', e => {
-        const product = e.target.closest('.product');
-        selectedProduct.description = product.dataset.title;
-        selectedProduct.amount = product.dataset.price;
-
-        // Create temporary PayPal button container
-        const container = document.createElement('div');
-        container.id = 'paypal-temp';
-        document.body.appendChild(container);
-
-        paypal.Buttons({
-          style: {
-            color: 'gold',
-            shape: 'rect',
-            label: 'buynow',
-            height: 40
-          },
-          createOrder: (data, actions) => {
-            return actions.order.create({
-              purchase_units: [{
-                description: selectedProduct.description,
-                amount: { value: selectedProduct.amount }
-              }]
-            });
-          },
-          onApprove: (data, actions) => {
-            return actions.order.capture().then(details => {
-              alert('Thank you ' + details.payer.name.given_name + '! Your payment for ' + selectedProduct.description + ' was successful.');
-              container.remove();
-            });
-          },
-          onCancel: () => container.remove(),
-          onError: () => container.remove()
-        }).render('#paypal-temp');
-      });
-    });
-
-    // Image modal
-    const modal = document.getElementById('imgModal');
-    const modalImg = document.getElementById('modalImg');
-    const images = document.querySelectorAll('.clickable-img');
-    const closeBtn = document.querySelector('.close');
-
-    images.forEach(img => {
-      img.addEventListener('click', () => {
-        modal.style.display = 'block';
-        modalImg.src = img.src;
-      });
-    });
-
-    closeBtn.onclick = () => modal.style.display = 'none';
-    window.onclick = e => { if (e.target == modal) modal.style.display = 'none'; };
+    // Product 2
+    paypal.Buttons({
+      style: { layout: 'vertical', color: 'gold', shape: 'rect', label: 'buynow' },
+      createOrder: function(data, actions) {
+        return actions.order.create({
+          purchase_units: [{
+            description: 'Motorola RAZR V3i',
+            amount: { value: '49.99' }
+          }]
+        });
+      },
+      onApprove: function(data, actions) {
+        return actions.order.capture().then(function(details) {
+          alert('Thank you ' + details.payer.name.given_name + '! Your payment for the Motorola RAZR V3i was successful.');
+        });
+      }
+    }).render('#paypal-button-container-2');
   </script>
+
 </body>
 </html>
